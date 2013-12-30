@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+if [ -d ukf-meta ]; then
+	echo "Saving ukf-meta to ukf-meta-save..."
+	rm -rf ukf-meta-save
+	cp -r ukf-meta ukf-meta-save
+	echo "Save completed."
+else
+	echo "No ukf-meta directory; save not performed."
+fi
+
+# End

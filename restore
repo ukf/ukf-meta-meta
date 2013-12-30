@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+if [ -d ukf-meta-save ]; then
+	echo "Restoring ukf-meta from ukf-meta-save..."
+	rm -rf ukf-meta
+	cp -r ukf-meta-save ukf-meta
+	echo "Restore completed."
+else
+	echo "No ukf-meta-save directory; restore not performed."
+fi
+
+# End
