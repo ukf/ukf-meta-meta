@@ -101,6 +101,43 @@ will lose data.
 
 ### Subsequent Updates
 
+To incorporate new material from the private repository and merge it into the public
+repository, execute:
+
+    $ ./update
+
+This script performs the following steps:
+
+* Switch back to the `master` branch.
+* Use `git svn rebase` to fetch the new material.
+* Create a new `update` branch, and filter it.
+* Merge that in to the `public` branch using a fast-forward only merge.
+* Delete the `update` branch.
+
+Because the process involves re-filtering every commit, this takes between five to ten
+minutes. Again, you should use the `compare` script to verify that everything has worked
+before pushing the results to the public repository:
+
+    $ ./compare
+    Commit comments should be the same, hashes different:
+      master fcaa044 Add a .gitignore equivalent to existing svn ignores.
+    * public ba673cf [ahead 1] Add a .gitignore equivalent to existing svn ignores.
+
+    Tree values should be the same:
+       master:  tree 1a8d668a2e322dd3390f5927dc778bd12c2c9d0a
+       public:  tree 1a8d668a2e322dd3390f5927dc778bd12c2c9d0a
+
+    Number of revisions should be different:
+       master:  11745
+       public:  1082
+
+Note the "`[ahead 1]`" above indicating that there is something to push. Bring the
+public repository up to date as follows:
+
+    $ git push --verbose github public:master
+
+If you run `compare` again, the "`[ahead 1]`" should be gone. Success!
+
 ### Save and Restore
 
 Two scripts are provided to help with development of the other scripts. They maintain

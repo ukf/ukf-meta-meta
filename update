@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+cd ukf-meta
+
+# Switch back to the master branch
+git checkout master
+
+# Pull in any new material
+git svn rebase
+
+# Make a new branch to perform the update with
+git checkout -b update
+
+#
+# Delete any leftover "original" refs from last run.
+#
+git for-each-ref --format="%(refname)" refs/original/ | xargs -n 1 git update-ref -d
+
+#
+# Filter the new branch
+#
+git filter-branch \
+	--msg-filter 'sed -e "/^git-svn-id:/d"' \
+	--prune-empty \
+	-- \
+	HEAD
+
+#
+# Fast-forward merge the public branch with the update branch.
+#
+git checkout public
+git merge --ff-only update
+
+#
+# Delete the update branch.
+#
+git branch -d update
+
+# End
