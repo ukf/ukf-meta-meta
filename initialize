@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+#
+# Initialize the ukf-meta directory as a git-svn clone of the the private
+# version of the UK federation's metadata repository.
+#
+
+# Delete any previous attempt
+rm -rf ukf-meta
+
+# Initialise repository
+git init ukf-meta
+cd ukf-meta
+git svn init --trunk trunk https://svn.sdss.ac.uk/ukfedmeta
+
+git config svn.authorsfile `cd ..;pwd`/authors
+
+#
+# Configure the set of files and directories to be ignored by
+# git svn operations by constructing a regular expression
+# to match them. This should not change in the lifetime of the
+# repository.
+#
+# Construct the regular expression by combining a number of
+# smaller ones.
+#
+XBUILD="build/(expiry_whitelist|extra_addresses|list)"
+XMDX="mdx/(int_edugain/verify-blacklist)"
+XTOOLS="tools/(apache-ant|mda|samlsign|xmltool)"
+XTOP="OpenAthens|certs|endorsed|entities|lib|src|test|trunk|xalan"
+XXML="xml/(entities|master|members|ukfed|sdss)"
+
+git config svn-remote.svn.ignore-paths \
+	"^trunk/($XBUILD|$XMDX|$XTOOLS|$XTOP|$XXML)"
+
+# End
