@@ -80,8 +80,24 @@ Verify this as follows:
        master:  11744
        public:  1081
 
+If you get results roughly like the above (obviously the specific values
+will be different) then your branches have been set up correctly.
 
 ### First Publication
+
+You now have a working repository which is suitable for publication. It's time to add
+an appropriate git remote and push to a new tracking branch. The standard setup is as follows:
+
+    $ git remote add github git@github.com:ukf/ukf-meta.git
+    $ git push --verbose --set-upstream github public:master
+
+If the `git push` is rejected, it may be because the remote repository already contains
+a `master` branch which is unrelated to the new one we're trying to create from our
+`public` branch. This might happen if you regenerated the working repository after changing
+the exclusion regular expression. In that case, you can reset things by adding the `--force` option
+to `git push`. Be aware that if you do this in other circumstances (for example, if you've
+pointed the remote URL at the wrong place), the remote repository
+will lose data.
 
 ### Subsequent Updates
 
