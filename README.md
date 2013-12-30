@@ -63,6 +63,24 @@ out as `HEAD`. To set up our initial filtered `public` branch:
 The filtered `public` branch omits the `git svn` metadata from the commit messages, and
 omits all empty commits (those which didn't affect the filtered content).
 
+After `first_filter` has run, which will take five to ten minutes, you should have `master`
+and `public` branches which have different histories but represent the same content trees.
+Verify this as follows:
+
+    $ ./compare
+    Commit comments should be the same, hashes different:
+      master 57b4d94 Delete embedded.pem after using it.
+    * public fd71f3b Delete embedded.pem after using it.
+
+    Tree values should be the same:
+       master:  tree 6867e1000b02b14305ba604e141939c3beb72215
+       public:  tree 6867e1000b02b14305ba604e141939c3beb72215
+
+    Number of revisions should be different:
+       master:  11744
+       public:  1081
+
+
 ### First Publication
 
 ### Subsequent Updates
