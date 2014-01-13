@@ -37,6 +37,9 @@ all the personal information from the repository, and excludes
 frequently-changed files such as the signed metadata in order to
 reduce the overall size.
 
+* Setting the `push.default` configuration variable to `default` to
+simplify the update operation.
+
 ### First Fetch and Filter
 
 Now, perform an initial import from the private repository:
@@ -88,8 +91,10 @@ will be different) then your branches have been set up correctly.
 You now have a working repository which is suitable for publication. It's time to add
 an appropriate git remote and push to a new tracking branch. The standard setup is as follows:
 
+    $ cd ukf-meta
     $ git remote add github git@github.com:ukf/ukf-meta.git
     $ git push --verbose --set-upstream github public:master
+    $ cd ..
 
 If the `git push` is rejected, it may be because the remote repository already contains
 a `master` branch which is unrelated to the new one we're trying to create from our
@@ -134,7 +139,7 @@ before pushing the results to the public repository:
 Note the "`[ahead 1]`" above indicating that there is something to push. Bring the
 public repository up to date as follows:
 
-    $ git push --verbose github public:master
+    $ (cd ukf-meta; git push)
 
 If you run `compare` again, the "`[ahead 1]`" should be gone. Success!
 

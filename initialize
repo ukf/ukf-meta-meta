@@ -14,6 +14,7 @@ cd ukf-meta
 git svn init --trunk trunk https://svn.sdss.ac.uk/ukfedmeta
 
 git config svn.authorsfile `cd ..;pwd`/authors
+git config push.default upstream
 
 #
 # Configure the set of files and directories to be ignored by
