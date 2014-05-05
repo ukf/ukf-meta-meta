@@ -1,17 +1,11 @@
 #!/usr/bin/env bash
 
 #
-# Initialize the ukf-meta directory as a git-svn clone of the the private
-# version of the UK federation's metadata repository.
+# Reinitialize an existing ukf-meta directory where possible
+# to take account of changes.
 #
 
-# Delete any previous attempt
-rm -rf ukf-meta
-
-# Initialise repository
-git init ukf-meta
 cd ukf-meta
-git svn init --trunk trunk https://svn.sdss.ac.uk/ukfedmeta
 
 git config svn.authorsfile `cd ..;pwd`/authors
 git config push.default upstream
