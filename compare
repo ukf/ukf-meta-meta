@@ -6,11 +6,6 @@ echo "Commit comments should be the same, hashes different:"
 git branch --list --verbose master public
 
 echo
-echo "Tree values should be the same:"
-echo "   master: " `git cat-file -p master | grep "^tree "`
-echo "   public: " `git cat-file -p public | grep "^tree "`
-
-echo
 echo "Number of revisions should be different:"
 echo "   master: " `git log --oneline master | wc -l`
 echo "   public: " `git log --oneline public | wc -l`

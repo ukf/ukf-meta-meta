@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+cd ukf-meta
+
+git remote add github git@github.com:ukf/ukf-meta.git
+git fetch github
+git checkout -b public github/master
+git checkout master
+
+# End

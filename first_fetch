@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-time (cd ukf-meta; git svn fetch) >fetch.log
-
-(cd ukf-meta; git gc --aggressive)
-
-grep -h -v "^r" fetch.log | sort | uniq >files.log
-
-# End

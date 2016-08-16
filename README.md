@@ -10,14 +10,26 @@ UK federation metadata repository to use these tools.**
 ## Operation
 
 These tools maintain a connection between the UK federation's
-[Subversion](http://subversion.apache.org) metadata repository, which is
-private because it contains personal information, and a
+metadata tooling repository, which is
+private because it contains historical personal information, and a
 [public version](https://github.com/ukf/ukf-meta) of that repository hosted
 on [Github](https://github.com/).
 
-The connection is maintained through a local Git repository which uses
-`git svn` to read the private Subversion repository, and `git filter-branch`
-to sanitise the data for public release.
+### Working Repository
+
+The connection between the UK federation and public versions of the repository
+is maintained through a local Git repository within which
+`git filter-branch` is used to sanitise the data for public release.
+
+The working repository is a clone of the UK federation's
+version of the repository, and its `origin` remote points there. The `github`
+remote is used to refer to the public version of the repository on GitHub.
+
+The following branches are used:
+
+* `master` tracks the `master` branch in `origin`
+* `public` tracks the `master` branch in `github`
+* `update` acts as the bridge between the two
 
 ### Initialization
 
@@ -27,84 +39,27 @@ To create and configure the local Git `ukf-meta` repository:
 
 The configuration includes:
 
-* Setting the `authors` file to map Subversion committer IDs to the
-appropriate values for Git. If a Subversion committer ID is not
-recognised, the `authors` file needs to be updated.
-
-* Setting a regular expression controlling files to be ignored by
-`git svn` operations such as `fetch` and `rebase`. This removes
-all the personal information from the repository, and excludes
-frequently-changed files such as the signed metadata in order to
-reduce the overall size.
-
 * Setting the `push.default` configuration variable to `default` to
 simplify the update operation.
 
-### First Fetch and Filter
+### Acquire Public Copy
 
-Now, perform an initial import from the private repository:
+This document assumes that you're not creating the public version of the
+repository for the first time.
 
-    $ ./first_fetch
+You should pull in the public repository's `master` branch as well
+as follows:
 
-This operation is timed, and logged into `fetch.log`. It will take an
-hour or so, and will result in a local repository of around 140MB at the
-time of writing.
+    $ ./pull_public
 
-You will see from the log that by far the majority of the commits are empty,
-because the changes they represented have been filtered out of the content trees by
-the regular expression configured into the local repository.
+This will set up the `public` branch to track the `github/master` branch.
 
-The `first_fetch` script also generates a `files.log` listing all the
-files created within the repository in order. You should review this to
-make sure that nothing undesirable has made it through.
+If you look at `gitk --all --date-order` you should see that only the first
+couple of commits are the same before the branches diverge as the `master`
+branch includes files like `xml/sdss-sites-11-unsigned.xml` which are filtered
+out of the `public` history.
 
-At this point, we have a single branch called `master`, and it is checked
-out as `HEAD`. To set up our initial filtered `public` branch:
-
-    $ ./first_filter
-
-The filtered `public` branch omits the `git svn` metadata from the commit messages, and
-omits all empty commits (those which didn't affect the filtered content).
-
-After `first_filter` has run, which will take five to ten minutes, you should have `master`
-and `public` branches which have different histories but represent the same content trees.
-Verify this as follows:
-
-    $ ./compare
-    Commit comments should be the same, hashes different:
-      master 57b4d94 Delete embedded.pem after using it.
-    * public fd71f3b Delete embedded.pem after using it.
-
-    Tree values should be the same:
-       master:  tree 6867e1000b02b14305ba604e141939c3beb72215
-       public:  tree 6867e1000b02b14305ba604e141939c3beb72215
-
-    Number of revisions should be different:
-       master:  11744
-       public:  1081
-
-If you get results roughly like the above (obviously the specific values
-will be different) then your branches have been set up correctly.
-
-### First Publication
-
-You now have a working repository which is suitable for publication. It's time to add
-an appropriate git remote and push to a new tracking branch. The standard setup is as follows:
-
-    $ cd ukf-meta
-    $ git remote add github git@github.com:ukf/ukf-meta.git
-    $ git push --verbose --set-upstream github public:master
-    $ cd ..
-
-If the `git push` is rejected, it may be because the remote repository already contains
-a `master` branch which is unrelated to the new one we're trying to create from our
-`public` branch. This might happen if you regenerated the working repository after changing
-the exclusion regular expression. In that case, you can reset things by adding the `--force` option
-to `git push`. Be aware that if you do this in other circumstances (for example, if you've
-pointed the remote URL at the wrong place), the remote repository
-will lose data.
-
-### Subsequent Updates
+### Update Process
 
 To incorporate new material from the private repository and merge it into the public
 repository, execute:
@@ -114,23 +69,30 @@ repository, execute:
 This script performs the following steps:
 
 * Switch back to the `master` branch.
-* Use `git svn rebase` to fetch the new material.
+* Use `git pull` to fetch the new material.
 * Create a new `update` branch, and filter it.
 * Merge that in to the `public` branch using a fast-forward only merge.
-* Delete the `update` branch.
 
-Because the process involves re-filtering every commit, this takes between five to ten
-minutes. Again, you should use the `compare` script to verify that everything has worked
+If this process fails, one good way of debugging it is to say:
+
+    $ (cd ukf-meta; gitk --all --date-order)
+
+This can help you locate things like the `update` and `public` branches
+diverging because of a change to the files being filtered out. Another trick
+for similar issues is to explicitly look for the place where they diverge:
+
+    $ (cd ukf-meta; git merge-base public update)
+
+Because the update process involves re-filtering every commit,
+`./update` can take up to twenty minutes.
+
+You should use the `compare` script to verify that everything has worked
 before pushing the results to the public repository:
 
     $ ./compare
     Commit comments should be the same, hashes different:
       master fcaa044 Add a .gitignore equivalent to existing svn ignores.
     * public ba673cf [ahead 1] Add a .gitignore equivalent to existing svn ignores.
-
-    Tree values should be the same:
-       master:  tree 1a8d668a2e322dd3390f5927dc778bd12c2c9d0a
-       public:  tree 1a8d668a2e322dd3390f5927dc778bd12c2c9d0a
 
     Number of revisions should be different:
        master:  11745
