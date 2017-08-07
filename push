@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+cd ukf-meta
+git push
+
+# End
