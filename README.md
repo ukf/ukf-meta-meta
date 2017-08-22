@@ -7,6 +7,9 @@ a partial clone of the UK federation's private metadata repository.
 **Note: you need to have access to the private version of the
 UK federation metadata repository to use these tools.**
 
+**Warning: the `update` process will fail on `git` version 2.13.0 or higher.
+See [issue #3](https://github.com/ukf/ukf-meta-meta/issues/3) for details.**
+
 ## Operation
 
 These tools maintain a connection between the UK federation's
