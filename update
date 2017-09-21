@@ -8,36 +8,10 @@ git checkout master
 # Pull in any new material
 git pull --ff-only origin
 
-# Make a new branch to perform the update with
-git branch -D update
-git checkout -b update
-
 #
-# Delete any leftover "original" refs from last run.
+# Run the branch update process inside a Docker container.
 #
-git for-each-ref --format="%(refname)" refs/original/ | xargs -n 1 git update-ref -d
-
-#
-# Filter the new branch
-#
-git filter-branch \
-	--index-filter '
-		git rm -r --quiet --ignore-unmatch \
-			build/expiry_whitelist* build/extra_addresses* build/list* \
-			mdx/int_edugain/entity-blacklist* mdx/int_edugain/verify-blacklist* \
-			tools/apache-ant* tools/mda* tools/samlsign* tools/xmltool* \
-			OpenAthens* certs* endorsed* entities* lib* src* test* trunk* xalan* \
-			xml/entities* xml/master* xml/members* xml/ukfed* xml/sdss* \
-			tools/slacktee/conf
-	'\
-	--prune-empty \
-	-- \
-	HEAD
-
-#
-# Fast-forward merge the public branch with the update branch.
-#
-git checkout public
-git merge --ff-only update
+cd ..
+docker run -it --rm -v `pwd`:/home/user git-1.8 ./do_filter
 
 # End

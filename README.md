@@ -7,8 +7,18 @@ a partial clone of the UK federation's private metadata repository.
 **Note: you need to have access to the private version of the
 UK federation metadata repository to use these tools.**
 
-**Warning: the `update` process will fail on `git` version 2.13.0 or higher.
-See [issue #3](https://github.com/ukf/ukf-meta-meta/issues/3) for details.**
+In order to work around a change in the historical behaviour of Git in
+version 2.13.0 ([issue #3](https://github.com/ukf/ukf-meta-meta/issues/3)
+for details), you need to run the critical `filter-branch` part of the
+operation using an earlier version. This is done inside a Docker
+container, so you need to have Docker installed. You also need to create the
+image for that `git-1.8` container as follows:
+
+```
+cd git-docker
+./build
+cd ..
+```
 
 ## Operation
 
