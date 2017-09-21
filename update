@@ -15,7 +15,7 @@ git checkout -b update
 #
 # Delete any leftover "original" refs from last run.
 #
-git for-each-ref --format="%(refname)" refs/original/ | xargs -n 1 git update-ref -d
+git for-each-ref --format="%(refname)" refs/original/ | xargs -r -n 1 git update-ref -d
 
 #
 # Filter the new branch
