@@ -1,5 +1,7 @@
 # ukf-meta-meta
 
+***Note: these tools are no longer in use; this repository is of historical interest only.***
+
 Tools to generate and maintain the
 [public `ukf-meta` repository](https://github.com/ukf/ukf-meta) as
 a partial clone of the UK federation's private metadata repository.
